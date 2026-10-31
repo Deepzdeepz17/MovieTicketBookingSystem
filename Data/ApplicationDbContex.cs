@@ -13,5 +13,6 @@ namespace MovieTicketBookingSystem.Data
 
         public DbSet<Movie> Movies { get; set; } = null!;
         public DbSet<Theatre> Theatres { get; set; } = null!;
+        public DbSet<Screen> Screens { get; set; } = null!;
     }
 }
