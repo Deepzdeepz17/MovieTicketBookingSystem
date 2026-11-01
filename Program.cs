@@ -4,11 +4,19 @@ using MovieTicketBookingSystem.Data;
 using MovieTicketBookingSystem.Repositories;
 using MovieTicketBookingSystem.Repositories.Interfaces;
 using MovieTicketBookingSystem.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.AddControllers();
+// Add controllers and configure JSON serialization
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler =
+            ReferenceHandler.IgnoreCycles;
+    });
+
+// Add OpenAPI
 builder.Services.AddOpenApi();
 
 // Database connection
@@ -42,13 +50,15 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Configure HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthorization();
 
 app.MapControllers();

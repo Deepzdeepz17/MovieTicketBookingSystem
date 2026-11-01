@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingSystem.Data;
 using MovieTicketBookingSystem.Models;
@@ -32,10 +33,43 @@ namespace MovieTicketBookingSystem.Repositories
 
         public async Task<Show> AddShowAsync(Show show)
         {
-            await _context.Shows.AddAsync(show);
-            await _context.SaveChangesAsync();
+            using var transaction =
+                await _context.Database.BeginTransactionAsync();
 
-            return show;
+            try
+            {
+                await _context.Shows.AddAsync(show);
+                await _context.SaveChangesAsync();
+
+                var seats = await _context.Seats
+                    .Where(s => s.ScreenId == show.ScreenId)
+                    .ToListAsync();
+
+                if (!seats.Any())
+                {
+                    throw new InvalidOperationException(
+                        "No seats are available for this screen.");
+                }
+
+                var showSeats = seats.Select(seat => new ShowSeat
+                {
+                    ShowId = show.ShowId,
+                    SeatId = seat.SeatId,
+                    Status = "Available"
+                }).ToList();
+
+                await _context.ShowSeats.AddRangeAsync(showSeats);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return show;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<Show?> UpdateShowAsync(int id, Show show)
