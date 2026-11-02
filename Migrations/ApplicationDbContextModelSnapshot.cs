@@ -66,6 +66,9 @@ namespace MovieTicketBookingSystem.Migrations
 
                     b.HasKey("BookingId");
 
+                    b.HasIndex("BookingReference")
+                        .IsUnique();
+
                     b.HasIndex("ShowId");
 
                     b.ToTable("Bookings");
@@ -276,12 +279,42 @@ namespace MovieTicketBookingSystem.Migrations
                     b.ToTable("Theatres");
                 });
 
+            modelBuilder.Entity("MovieTicketBookingSystem.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("MovieTicketBookingSystem.Models.Booking", b =>
                 {
                     b.HasOne("MovieTicketBookingSystem.Models.Show", "Show")
                         .WithMany()
                         .HasForeignKey("ShowId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Show");
@@ -292,13 +325,13 @@ namespace MovieTicketBookingSystem.Migrations
                     b.HasOne("MovieTicketBookingSystem.Models.Booking", "Booking")
                         .WithMany("BookingSeats")
                         .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MovieTicketBookingSystem.Models.Seat", "Seat")
                         .WithMany()
                         .HasForeignKey("SeatId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Booking");

@@ -33,8 +33,7 @@ namespace MovieTicketBookingSystem.Migrations
                         name: "FK_Bookings_Shows_ShowId",
                         column: x => x.ShowId,
                         principalTable: "Shows",
-                        principalColumn: "ShowId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ShowId");
                 });
 
             migrationBuilder.CreateTable(
@@ -54,15 +53,19 @@ namespace MovieTicketBookingSystem.Migrations
                         name: "FK_BookingSeats_Bookings_BookingId",
                         column: x => x.BookingId,
                         principalTable: "Bookings",
-                        principalColumn: "BookingId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BookingId");
                     table.ForeignKey(
                         name: "FK_BookingSeats_Seats_SeatId",
                         column: x => x.SeatId,
                         principalTable: "Seats",
-                        principalColumn: "SeatId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "SeatId");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_BookingReference",
+                table: "Bookings",
+                column: "BookingReference",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_ShowId",

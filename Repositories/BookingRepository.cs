@@ -81,6 +81,7 @@ namespace MovieTicketBookingSystem.Repositories
             await _context.SaveChangesAsync();
 
             foreach (var showSeat in showSeats)
+
             {
                 var bookingSeat = new BookingSeat
                 {
