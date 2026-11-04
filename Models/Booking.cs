@@ -1,3 +1,4 @@
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,6 +11,12 @@ namespace MovieTicketBookingSystem.Models
         [Required]
         [StringLength(30)]
         public string BookingReference { get; set; } = string.Empty;
+
+        // Relationship with logged-in User
+        [Required]
+        public int UserId { get; set; }
+
+        public User? User { get; set; }
 
         [Required]
         public int ShowId { get; set; }

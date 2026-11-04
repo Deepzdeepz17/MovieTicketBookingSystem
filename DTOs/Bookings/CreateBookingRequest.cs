@@ -12,6 +12,7 @@ namespace MovieTicketBookingSystem.DTOs.Bookings
         [EmailAddress]
         public string CustomerEmail { get; set; } = string.Empty;
 
+        [StringLength(15, MinimumLength = 10)]
         [Required]
         public string CustomerPhone { get; set; } = string.Empty;
 

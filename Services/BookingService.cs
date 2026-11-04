@@ -1,3 +1,4 @@
+
 using MovieTicketBookingSystem.DTOs.Bookings;
 using MovieTicketBookingSystem.Models;
 using MovieTicketBookingSystem.Repositories.Interfaces;
@@ -13,25 +14,42 @@ namespace MovieTicketBookingSystem.Services
             _bookingRepository = bookingRepository;
         }
 
+        // Admin: Get all bookings
         public async Task<IEnumerable<Booking>> GetAllBookingsAsync()
         {
             return await _bookingRepository.GetAllBookingsAsync();
         }
 
-        public async Task<Booking?> GetBookingByIdAsync(int id)
+        // Customer: Get only their own bookings
+        public async Task<IEnumerable<Booking>> GetMyBookingsAsync(int userId)
         {
-            return await _bookingRepository.GetBookingByIdAsync(id);
+            return await _bookingRepository.GetMyBookingsAsync(userId);
         }
 
+        // Admin: Get any booking
+        // Customer: Get own booking only
+        public async Task<Booking?> GetBookingByIdAsync(
+            int id, int userId, bool isAdmin)
+        {
+            return await _bookingRepository.GetBookingByIdAsync(
+                id, userId, isAdmin);
+        }
+
+        // Customer: Create booking
         public async Task<Booking> CreateBookingAsync(
-            CreateBookingRequest request)
+            CreateBookingRequest request, int userId)
         {
-            return await _bookingRepository.CreateBookingAsync(request);
+            return await _bookingRepository.CreateBookingAsync(
+                request, userId);
         }
 
-        public async Task<Booking?> CancelBookingAsync(int id)
+        // Admin: Cancel any booking
+        // Customer: Cancel own booking only
+        public async Task<Booking?> CancelBookingAsync(
+            int id, int userId, bool isAdmin)
         {
-            return await _bookingRepository.CancelBookingAsync(id);
+            return await _bookingRepository.CancelBookingAsync(
+                id, userId, isAdmin);
         }
     }
 }

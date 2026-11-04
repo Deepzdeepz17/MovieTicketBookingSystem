@@ -85,6 +85,17 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+// CORS Configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -93,8 +104,15 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.MapOpenApi();
 }
+if (app.Environment.IsDevelopment())
+{
+    await RoleSeeder.SeedAsync(
+        app.Services,
+        app.Configuration);
+}
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAngular");
 
 app.UseAuthentication();
 

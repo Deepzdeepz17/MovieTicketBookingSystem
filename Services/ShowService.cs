@@ -36,5 +36,10 @@ namespace MovieTicketBookingSystem.Services
         {
             return await _showRepository.DeleteShowAsync(id);
         }
+
+        public async Task<IEnumerable<ShowSeat>> GetShowSeatsAsync(int showId)
+        {
+            return await _showRepository.GetShowSeatsAsync(showId);
+        }
     }
 }

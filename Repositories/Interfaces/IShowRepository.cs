@@ -9,5 +9,6 @@ namespace MovieTicketBookingSystem.Repositories.Interfaces
         Task<Show> AddShowAsync(Show show);
         Task<Show?> UpdateShowAsync(int id, Show show);
         Task<bool> DeleteShowAsync(int id);
+        Task<IEnumerable<ShowSeat>> GetShowSeatsAsync(int showId);
     }
 }

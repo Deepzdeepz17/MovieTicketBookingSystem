@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingSystem.Data;
 using MovieTicketBookingSystem.Models;
@@ -101,6 +100,17 @@ namespace MovieTicketBookingSystem.Repositories
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        // Get all seats and their availability status for a show
+        public async Task<IEnumerable<ShowSeat>> GetShowSeatsAsync(int showId)
+        {
+            return await _context.ShowSeats
+                .Include(ss => ss.Seat)
+                .Where(ss => ss.ShowId == showId)
+                .OrderBy(ss => ss.Seat!.RowName)
+                .ThenBy(ss => ss.Seat!.SeatNumber)
+                .ToListAsync();
         }
     }
 }

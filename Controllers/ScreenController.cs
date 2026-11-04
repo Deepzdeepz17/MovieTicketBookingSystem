@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using MovieTicketBookingSystem.Models;
 using MovieTicketBookingSystem.Services;
 
 namespace MovieTicketBookingSystem.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ScreensController : ControllerBase
@@ -15,6 +18,7 @@ namespace MovieTicketBookingSystem.Controllers
             _screenService = screenService;
         }
 
+        // GET: api/Screens
         [HttpGet]
         public async Task<IActionResult> GetAllScreens()
         {
@@ -22,6 +26,7 @@ namespace MovieTicketBookingSystem.Controllers
             return Ok(screens);
         }
 
+        // GET: api/Screens/1
         [HttpGet("{id}")]
         public async Task<IActionResult> GetScreenById(int id)
         {
@@ -33,6 +38,8 @@ namespace MovieTicketBookingSystem.Controllers
             return Ok(screen);
         }
 
+        // POST: api/Screens
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddScreen(Screen screen)
         {
@@ -44,6 +51,8 @@ namespace MovieTicketBookingSystem.Controllers
                 createdScreen);
         }
 
+        // PUT: api/Screens/1
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateScreen(int id, Screen screen)
         {
@@ -55,6 +64,8 @@ namespace MovieTicketBookingSystem.Controllers
             return Ok(updatedScreen);
         }
 
+        // DELETE: api/Screens/1
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteScreen(int id)
         {

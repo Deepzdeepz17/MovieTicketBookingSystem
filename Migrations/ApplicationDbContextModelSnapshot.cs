@@ -64,12 +64,17 @@ namespace MovieTicketBookingSystem.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("BookingId");
 
                     b.HasIndex("BookingReference")
                         .IsUnique();
 
                     b.HasIndex("ShowId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
                 });
@@ -124,6 +129,10 @@ namespace MovieTicketBookingSystem.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PosterUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
@@ -317,7 +326,15 @@ namespace MovieTicketBookingSystem.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("MovieTicketBookingSystem.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Show");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MovieTicketBookingSystem.Models.BookingSeat", b =>

@@ -1,3 +1,4 @@
+
 using MovieTicketBookingSystem.DTOs.Bookings;
 using MovieTicketBookingSystem.Models;
 
@@ -5,12 +6,19 @@ namespace MovieTicketBookingSystem.Services
 {
     public interface IBookingService
     {
+        // Admin: Get all bookings
         Task<IEnumerable<Booking>> GetAllBookingsAsync();
 
-        Task<Booking?> GetBookingByIdAsync(int id);
+        // Customer: Get own bookings
+        Task<IEnumerable<Booking>> GetMyBookingsAsync(int userId);
 
-        Task<Booking> CreateBookingAsync(CreateBookingRequest request);
+        Task<Booking?> GetBookingByIdAsync(
+            int id, int userId, bool isAdmin);
 
-        Task<Booking?> CancelBookingAsync(int id);
+        Task<Booking> CreateBookingAsync(
+            CreateBookingRequest request, int userId);
+
+        Task<Booking?> CancelBookingAsync(
+            int id, int userId, bool isAdmin);
     }
 }
