@@ -8,7 +8,6 @@ namespace MovieTicketBookingSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieService _movieService;
@@ -18,8 +17,9 @@ namespace MovieTicketBookingSystem.Controllers
             _movieService = movieService;
         }
 
-        // GET: api/movies
-        // Admin and Customer can view movies
+        // GET: api/Movies
+        // Anyone can view all movies without login
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllMovies()
         {
@@ -28,8 +28,9 @@ namespace MovieTicketBookingSystem.Controllers
             return Ok(movies);
         }
 
-        // GET: api/movies/1
-        // Admin and Customer can view a particular movie
+        // GET: api/Movies/1
+        // Anyone can view a particular movie without login
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMovieById(int id)
         {
@@ -46,7 +47,7 @@ namespace MovieTicketBookingSystem.Controllers
             return Ok(movie);
         }
 
-        // POST: api/movies
+        // POST: api/Movies
         // Only Admin can add movies
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -57,7 +58,7 @@ namespace MovieTicketBookingSystem.Controllers
             return Ok(result);
         }
 
-        // PUT: api/movies/1
+        // PUT: api/Movies/1
         // Only Admin can update movies
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
@@ -84,7 +85,7 @@ namespace MovieTicketBookingSystem.Controllers
             return Ok(result);
         }
 
-        // DELETE: api/movies/1
+        // DELETE: api/Movies/1
         // Only Admin can delete movies
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]

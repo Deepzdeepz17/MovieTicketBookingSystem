@@ -12,13 +12,12 @@ namespace MovieTicketBookingSystem.Services
         // Customer: Get own bookings
         Task<IEnumerable<Booking>> GetMyBookingsAsync(int userId);
 
-        Task<Booking?> GetBookingByIdAsync(
-            int id, int userId, bool isAdmin);
+        Task<Booking?> GetBookingByIdAsync(int id);
 
         Task<Booking> CreateBookingAsync(
             CreateBookingRequest request, int userId);
 
-        Task<Booking?> CancelBookingAsync(
-            int id, int userId, bool isAdmin);
+
+        Task<Booking?> CancelBookingAsync(int id);
     }
 }

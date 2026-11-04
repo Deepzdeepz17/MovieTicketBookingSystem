@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using MovieTicketBookingSystem.DTOs.Bookings;
 using MovieTicketBookingSystem.Services;
+using MovieTicketBookingSystem.Authorization;
 using System.Security.Claims;
 
 namespace MovieTicketBookingSystem.Controllers
@@ -13,12 +14,17 @@ namespace MovieTicketBookingSystem.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly IBookingService _bookingService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public BookingsController(IBookingService bookingService)
+        public BookingsController(
+            IBookingService bookingService,
+            IAuthorizationService authorizationService)
         {
             _bookingService = bookingService;
+            _authorizationService = authorizationService;
         }
 
+        // Get logged-in user's ID
         private int GetLoggedInUserId()
         {
             var userId = User.FindFirstValue(
@@ -62,18 +68,26 @@ namespace MovieTicketBookingSystem.Controllers
         // GET: api/Bookings/1
         // Admin: Any booking
         // Customer: Own booking only
+        [Authorize(Roles = "Admin,Customer")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetBookingById(int id)
         {
-            int userId = GetLoggedInUserId();
-            bool isAdmin = User.IsInRole("Admin");
-
+            // Retrieve booking first
             var booking =
-                await _bookingService.GetBookingByIdAsync(
-                    id, userId, isAdmin);
+                await _bookingService.GetBookingByIdAsync(id);
 
             if (booking == null)
                 return NotFound("Booking not found.");
+
+            // Check custom authorization
+            var authorizationResult =
+                await _authorizationService.AuthorizeAsync(
+                    User,
+                    booking,
+                    new BookingOwnerRequirement());
+
+            if (!authorizationResult.Succeeded)
+                return Forbid();
 
             return Ok(booking);
         }
@@ -107,22 +121,37 @@ namespace MovieTicketBookingSystem.Controllers
         // PUT: api/Bookings/1/cancel
         // Admin: Any booking
         // Customer: Own booking only
+        [Authorize(Roles = "Admin,Customer")]
         [HttpPut("{id:int}/cancel")]
         public async Task<IActionResult> CancelBooking(int id)
         {
             try
             {
-                int userId = GetLoggedInUserId();
-                bool isAdmin = User.IsInRole("Admin");
-
+                // Retrieve booking first
                 var booking =
-                    await _bookingService.CancelBookingAsync(
-                        id, userId, isAdmin);
+                    await _bookingService.GetBookingByIdAsync(id);
 
                 if (booking == null)
                     return NotFound("Booking not found.");
 
-                return Ok(booking);
+                // Check custom authorization
+                var authorizationResult =
+                    await _authorizationService.AuthorizeAsync(
+                        User,
+                        booking,
+                        new BookingOwnerRequirement());
+
+                if (!authorizationResult.Succeeded)
+                    return Forbid();
+
+                // Cancel only after authorization succeeds
+                var cancelledBooking =
+                    await _bookingService.CancelBookingAsync(id);
+
+                if (cancelledBooking == null)
+                    return NotFound("Booking not found.");
+
+                return Ok(cancelledBooking);
             }
             catch (InvalidOperationException ex)
             {

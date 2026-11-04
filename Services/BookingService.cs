@@ -1,4 +1,3 @@
-
 using MovieTicketBookingSystem.DTOs.Bookings;
 using MovieTicketBookingSystem.Models;
 using MovieTicketBookingSystem.Repositories.Interfaces;
@@ -26,13 +25,10 @@ namespace MovieTicketBookingSystem.Services
             return await _bookingRepository.GetMyBookingsAsync(userId);
         }
 
-        // Admin: Get any booking
-        // Customer: Get own booking only
-        public async Task<Booking?> GetBookingByIdAsync(
-            int id, int userId, bool isAdmin)
+        // Get booking by ID
+        public async Task<Booking?> GetBookingByIdAsync(int id)
         {
-            return await _bookingRepository.GetBookingByIdAsync(
-                id, userId, isAdmin);
+            return await _bookingRepository.GetBookingByIdAsync(id);
         }
 
         // Customer: Create booking
@@ -43,13 +39,10 @@ namespace MovieTicketBookingSystem.Services
                 request, userId);
         }
 
-        // Admin: Cancel any booking
-        // Customer: Cancel own booking only
-        public async Task<Booking?> CancelBookingAsync(
-            int id, int userId, bool isAdmin)
+        // Cancel booking
+        public async Task<Booking?> CancelBookingAsync(int id)
         {
-            return await _bookingRepository.CancelBookingAsync(
-                id, userId, isAdmin);
+            return await _bookingRepository.CancelBookingAsync(id);
         }
     }
 }

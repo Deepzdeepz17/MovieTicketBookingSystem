@@ -14,8 +14,7 @@ namespace MovieTicketBookingSystem.Repositories.Interfaces
 
         // Admin: Get any booking
         // Customer: Get own booking only
-        Task<Booking?> GetBookingByIdAsync(
-            int id, int userId, bool isAdmin);
+        Task<Booking?> CancelBookingAsync(int id);
 
         // Customer: Create booking
         Task<Booking> CreateBookingAsync(
@@ -23,7 +22,6 @@ namespace MovieTicketBookingSystem.Repositories.Interfaces
 
         // Admin: Cancel any booking
         // Customer: Cancel own booking only
-        Task<Booking?> CancelBookingAsync(
-            int id, int userId, bool isAdmin);
+        Task<Booking?> GetBookingByIdAsync(int id);
     }
 }

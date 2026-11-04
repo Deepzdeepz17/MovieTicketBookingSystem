@@ -39,24 +39,14 @@ namespace MovieTicketBookingSystem.Repositories
                 .ToListAsync();
         }
 
-        // Admin: Get any booking
-        // Customer: Get own booking only
-        public async Task<Booking?> GetBookingByIdAsync(
-            int id, int userId, bool isAdmin)
+        // Get booking by ID
+        public async Task<Booking?> GetBookingByIdAsync(int id)
         {
-            var query = _context.Bookings
+            return await _context.Bookings
                 .Include(b => b.Show)
                 .Include(b => b.BookingSeats)
                     .ThenInclude(bs => bs.Seat)
-                .AsQueryable();
-
-            if (!isAdmin)
-            {
-                query = query.Where(b => b.UserId == userId);
-            }
-
-            return await query.FirstOrDefaultAsync(
-                b => b.BookingId == id);
+                .FirstOrDefaultAsync(b => b.BookingId == id);
         }
 
         // Customer: Create booking
@@ -177,25 +167,15 @@ namespace MovieTicketBookingSystem.Repositories
             }
         }
 
-        // Admin: Cancel any booking
-        // Customer: Cancel own booking only
-        public async Task<Booking?> CancelBookingAsync(
-            int id, int userId, bool isAdmin)
+        // Cancel booking after authorization
+        public async Task<Booking?> CancelBookingAsync(int id)
         {
             await using var transaction =
                 await _context.Database.BeginTransactionAsync();
 
-            var query = _context.Bookings
+            var booking = await _context.Bookings
                 .Include(b => b.BookingSeats)
-                .AsQueryable();
-
-            if (!isAdmin)
-            {
-                query = query.Where(b => b.UserId == userId);
-            }
-
-            var booking = await query.FirstOrDefaultAsync(
-                b => b.BookingId == id);
+                .FirstOrDefaultAsync(b => b.BookingId == id);
 
             if (booking == null)
                 return null;
